@@ -239,22 +239,16 @@ class Selector extends Component {
 
   render() {
     return (
-      <nav class="navbar navbar-expand navbar-light bg-light">
-        <div>
-          <ul class="navbar-nav">
-            {
-              Object.keys(samples).map((label, i) => {
-                return (
-                  <li className={'nav-item ' + (this.state.current === label ? "active" : "")}>
-                    <a href="#" className="nav-link" onClick={this.onLabelClick(label)}>
-                      {label}
-                    </a>
-                  </li>
-                );
-              })
-            }
-          </ul>
-        </div>
+      <nav class="mt-2 mb-2 bg-light border rounded pt-2 pr-2 pb-0 pl-2">
+        {
+          Object.keys(samples).map((label, i) => {
+            return (
+              <a href="javascript:void(0);" className={'btn ' + (this.state.current === label ? 'btn-primary' : 'btn-secondary') + ' mr-2 mb-2'} onClick={this.onLabelClick(label)}>
+                {label}
+              </a>
+            );
+          })
+        }
       </nav>
     );
   }
@@ -508,16 +502,16 @@ class Playground extends Component {
     }
 
     return (
-      <div className="container-fluid">
+      <div className="container-fluid pt-2 pr-5 pb-2 pl-5">
         <div className="page-header">
-          <h1>react-jsonschema-form</h1>
+          <h1>RJSF Playground</h1>
           <div className="row">
             <div className="col-12">
               <Selector onSelected={this.load} />
             </div>
           </div>
           <div className="row">
-          <div className="col-2">
+            <div className="col-2">
               <Form
                 idPrefix="rjsf_options"
                 schema={liveSettingsSchema}
