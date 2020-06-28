@@ -198,19 +198,22 @@ class Editor extends Component {
     const icon = this.state.valid ? "ok" : "remove";
     const cls = this.state.valid ? "valid" : "invalid";
     return (
-      <div className="panel panel-default">
-        <div className="panel-heading">
+      <div className="card card-body">
+        <div className="card-heading">
           <span className={`${cls} glyphicon glyphicon-${icon}`} />
           {" " + title}
         </div>
-        <MonacoEditor
-          language="json"
-          value={this.state.code}
-          theme="vs-light"
-          onChange={this.onCodeChange}
-          height={400}
-          options={monacoEditorOptions}
-        />
+
+        <div className="card-text">
+          <MonacoEditor
+            language="json"
+            value={this.state.code}
+            theme="vs-light"
+            onChange={this.onCodeChange}
+            height={400}
+            options={monacoEditorOptions}
+          />
+        </div>
       </div>
     );
   }
@@ -236,20 +239,23 @@ class Selector extends Component {
 
   render() {
     return (
-      <ul className="nav nav-pills">
-        {Object.keys(samples).map((label, i) => {
-          return (
-            <li
-              key={i}
-              role="presentation"
-              className={this.state.current === label ? "active" : ""}>
-              <a href="#" onClick={this.onLabelClick(label)}>
-                {label}
-              </a>
-            </li>
-          );
-        })}
-      </ul>
+      <nav class="navbar navbar-expand navbar-light bg-light">
+        <div>
+          <ul class="navbar-nav">
+            {
+              Object.keys(samples).map((label, i) => {
+                return (
+                  <li className={'nav-item ' + (this.state.current === label ? "active" : "")}>
+                    <a href="#" className="nav-link" onClick={this.onLabelClick(label)}>
+                      {label}
+                    </a>
+                  </li>
+                );
+              })
+            }
+          </ul>
+        </div>
+      </nav>
     );
   }
 }
@@ -506,10 +512,12 @@ class Playground extends Component {
         <div className="page-header">
           <h1>react-jsonschema-form</h1>
           <div className="row">
-            <div className="col-sm-8">
+            <div className="col-12">
               <Selector onSelected={this.load} />
             </div>
-            <div className="col-sm-2">
+          </div>
+          <div className="row">
+          <div className="col-2">
               <Form
                 idPrefix="rjsf_options"
                 schema={liveSettingsSchema}
@@ -518,7 +526,7 @@ class Playground extends Component {
                 <div />
               </Form>
             </div>
-            <div className="col-sm-2">
+            <div className="col-10">
               <ThemeSelector
                 themes={themes}
                 theme={theme}
@@ -535,110 +543,114 @@ class Playground extends Component {
             </div>
           </div>
         </div>
-        <div className="col-sm-7">
-          <Editor
-            title="JSONSchema"
-            code={toJson(schema)}
-            onChange={this.onSchemaEdited}
-          />
-          <div className="row">
-            <div className="col-sm-6">
-              <Editor
-                title="UISchema"
-                code={toJson(uiSchema)}
-                onChange={this.onUISchemaEdited}
-              />
-            </div>
-            <div className="col-sm-6">
-              <Editor
-                title="formData"
-                code={toJson(formData)}
-                onChange={this.onFormDataEdited}
-              />
-            </div>
-          </div>
-          {extraErrors && (
+        <div className="row">
+          <div className="col-sm-7">
+            <Editor
+              title="JSONSchema"
+              code={toJson(schema)}
+              onChange={this.onSchemaEdited}
+            />
             <div className="row">
-              <div className="col">
+              <div className="col-sm-6">
                 <Editor
-                  title="extraErrors"
-                  code={toJson(extraErrors || {})}
-                  onChange={this.onExtraErrorsEdited}
+                  title="UISchema"
+                  code={toJson(uiSchema)}
+                  onChange={this.onUISchemaEdited}
+                />
+              </div>
+              <div className="col-sm-6">
+                <Editor
+                  title="formData"
+                  code={toJson(formData)}
+                  onChange={this.onFormDataEdited}
                 />
               </div>
             </div>
-          )}
-        </div>
-        <div className="col-sm-5">
-          {this.state.form && (
-            <DemoFrame
-              head={
-                <React.Fragment>
-                  <link
-                    rel="stylesheet"
-                    id="theme"
-                    href={this.state.stylesheet || ""}
+            {extraErrors && (
+              <div className="row">
+                <div className="col">
+                  <Editor
+                    title="extraErrors"
+                    code={toJson(extraErrors || {})}
+                    onChange={this.onExtraErrorsEdited}
                   />
-                  {theme === "antd" && (
-                    <div
-                      dangerouslySetInnerHTML={{
-                        __html: document.getElementById("antd-styles-iframe")
-                          .contentDocument.head.innerHTML,
-                      }}
-                    />
-                  )}
-                </React.Fragment>
-              }
-              style={{
-                width: "100%",
-                height: 1000,
-                border: 0,
-              }}
-              theme={theme}>
-              <FormComponent
-                {...templateProps}
-                liveValidate={liveSettings.validate}
-                disabled={liveSettings.disable}
-                omitExtraData={liveSettings.omitExtraData}
-                liveOmit={liveSettings.liveOmit}
-                schema={schema}
-                uiSchema={uiSchema}
-                formData={formData}
-                onChange={this.onFormDataChange}
-                noHtml5Validate={true}
-                onSubmit={({ formData }, e) => {
-                  console.log("submitted formData", formData);
-                  console.log("submit event", e);
-                }}
-                fields={{ geo: GeoPosition }}
-                validate={validate}
-                onBlur={(id, value) =>
-                  console.log(`Touched ${id} with value ${value}`)
-                }
-                onFocus={(id, value) =>
-                  console.log(`Focused ${id} with value ${value}`)
-                }
-                transformErrors={transformErrors}
-                onError={log("errors")}
-              />
-            </DemoFrame>
-          )}
-        </div>
-        <div className="col-sm-12">
-          <p style={{ textAlign: "center" }}>
-            Powered by{" "}
-            <a href="https://github.com/rjsf-team/react-jsonschema-form">
-              react-jsonschema-form
-            </a>
-            .
-            {process.env.SHOW_NETLIFY_BADGE === "true" && (
-              <div style={{ float: "right" }}>
-                <a href="https://www.netlify.com">
-                  <img src="https://www.netlify.com/img/global/badges/netlify-color-accent.svg" />
-                </a>
+                </div>
               </div>
             )}
-          </p>
+          </div>
+          <div className="col-sm-5">
+            {this.state.form && (
+              <DemoFrame
+                head={
+                  <React.Fragment>
+                    <link
+                      rel="stylesheet"
+                      id="theme"
+                      href={this.state.stylesheet || ""}
+                    />
+                    {theme === "antd" && (
+                      <div
+                        dangerouslySetInnerHTML={{
+                          __html: document.getElementById("antd-styles-iframe")
+                            .contentDocument.head.innerHTML,
+                        }}
+                      />
+                    )}
+                  </React.Fragment>
+                }
+                style={{
+                  width: "100%",
+                  height: 1000,
+                  border: 0,
+                }}
+                theme={theme}>
+                <FormComponent
+                  {...templateProps}
+                  liveValidate={liveSettings.validate}
+                  disabled={liveSettings.disable}
+                  omitExtraData={liveSettings.omitExtraData}
+                  liveOmit={liveSettings.liveOmit}
+                  schema={schema}
+                  uiSchema={uiSchema}
+                  formData={formData}
+                  onChange={this.onFormDataChange}
+                  noHtml5Validate={true}
+                  onSubmit={({ formData }, e) => {
+                    console.log("submitted formData", formData);
+                    console.log("submit event", e);
+                  }}
+                  fields={{ geo: GeoPosition }}
+                  validate={validate}
+                  onBlur={(id, value) =>
+                    console.log(`Touched ${id} with value ${value}`)
+                  }
+                  onFocus={(id, value) =>
+                    console.log(`Focused ${id} with value ${value}`)
+                  }
+                  transformErrors={transformErrors}
+                  onError={log("errors")}
+                />
+              </DemoFrame>
+            )}
+          </div>
+        </div>
+        <div className="row">
+          <div className="col-sm-12">
+            <p style={{ textAlign: "center" }}>
+              Powered by{" "}
+              <a href="https://github.com/rjsf-team/react-jsonschema-form">
+                react-jsonschema-form
+              </a>
+              .
+              {process.env.SHOW_NETLIFY_BADGE === "true" && (
+                <div style={{ float: "right" }}>
+                  <a href="https://www.netlify.com">
+                    <img src="https://www.netlify.com/img/global/badges/netlify-color-accent.svg" />
+                  </a>
+                </div>
+              )}
+            </p>
+          </div>
         </div>
       </div>
     );
