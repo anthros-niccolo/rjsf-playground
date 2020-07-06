@@ -1,9 +1,12 @@
 import React, { Component } from "react";
-import MonacoEditor from "react-monaco-editor";
-import { samples } from "./samples";
-import "react-app-polyfill/ie11";
+
 import Form, { withTheme } from "@rjsf/core";
+import MonacoEditor from "react-monaco-editor";
+
 import DemoFrame from "./DemoFrame";
+import { samples } from "./samples";
+
+import "react-app-polyfill/ie11";
 
 // deepEquals and shouldRender and isArguments are copied from rjsf-core. TODO: unify these utility functions.
 
@@ -197,6 +200,7 @@ class Editor extends Component {
     const { title } = this.props;
     const icon = this.state.valid ? "ok" : "remove";
     const cls = this.state.valid ? "valid" : "invalid";
+
     return (
       <div className="card card-body">
         <div className="card-heading">
@@ -418,10 +422,7 @@ class Playground extends Component {
   onExtraErrorsEdited = extraErrors =>
     this.setState({ extraErrors, shareURL: null });
 
-  onThemeSelected = (
-    theme,
-    { subthemes, stylesheet, theme: themeObj } = {}
-  ) => {
+  onThemeSelected = (theme, { subthemes, stylesheet, theme: themeObj } = {}) => {
     this.setState({
       theme,
       subthemes,
@@ -597,32 +598,37 @@ class Playground extends Component {
                   height: 1000,
                   border: 0,
                 }}
-                theme={theme}>
+                theme={theme}
+              >
                 <FormComponent
                   {...templateProps}
+
+                  schema={schema}
+                  uiSchema={uiSchema}
+                  fields={{ geo: GeoPosition }}
+
+                  formData={formData}
+
                   liveValidate={liveSettings.validate}
                   disabled={liveSettings.disable}
                   omitExtraData={liveSettings.omitExtraData}
                   liveOmit={liveSettings.liveOmit}
-                  schema={schema}
-                  uiSchema={uiSchema}
-                  formData={formData}
-                  onChange={this.onFormDataChange}
                   noHtml5Validate={true}
-                  onSubmit={({ formData }, e) => {
-                    console.log("submitted formData", formData);
-                    console.log("submit event", e);
-                  }}
-                  fields={{ geo: GeoPosition }}
                   validate={validate}
+
                   onBlur={(id, value) =>
-                    console.log(`Touched ${id} with value ${value}`)
+                    console.log(`LOG: touched ${id} with value ${value}`)
                   }
                   onFocus={(id, value) =>
-                    console.log(`Focused ${id} with value ${value}`)
+                    console.log(`LOG: focused ${id} with value ${value}`)
                   }
                   transformErrors={transformErrors}
                   onError={log("errors")}
+                  onChange={this.onFormDataChange}
+                  onSubmit={({ formData }, e) => {
+                    console.log("LOG: submitted formData", formData);
+                    console.log("LOG: submit event", e);
+                  }}
                 />
               </DemoFrame>
             )}
